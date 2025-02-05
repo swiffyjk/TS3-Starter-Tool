@@ -1,5 +1,4 @@
-<img align="left" width="64" height="64" src="https://github.com/user-attachments/assets/f0be6d25-ec6f-4a10-8f54-df297e0e9e0f" alt="ST icon">
-
+<img align="left" width="64" height="64" src="https://github.com/user-attachments/assets/f7a0c6c2-6551-45c5-9b6e-698d5f31d76c" alt="ST icon">
 
 <h1>The Sims 3 Starter Tool</h1> 
 
