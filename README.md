@@ -24,7 +24,7 @@ The Katy Perry Sweet Treats pack is an exception to this rule, as it is *not leg
 #### Experimental - testing features  
 - Installs the Katy Perry Sweet Treats pack (abandonware)\*
 #### Placeholder features  
-- Installs a ready-to-use mods folder layout
+- [Installs a ready-to-use mods folder layout](https://github.com/swiffyjk/TS3-Starter-Tool/wiki/How-to-install-mods-and-custom-content)
 - [Installs LazyDuchess' Smooth Patch](https://modthesims.info/d/658759/smooth-patch-2-1.html)
 - Updates the game's GPU database with modern graphics cards
 - Increases CPU usage for low-mid range CPUs
