@@ -34,6 +34,7 @@ The Katy Perry Sweet Treats pack is an exception to this rule, as it is *not leg
 #### Long-term future features  
 - [Simler90's Gameplay Fixes](https://modthesims.info/d/659969/simler90-s-gameplay-core-mod.html) [(with warnings for NRaas users)](https://www.nraas.net/community/announcements/topic11969)
 - Options.ini persistence script, prevents GPU updates resetting options
+- English dialect-change mods, e.g. [my Fall → Autumn Mod](https://modthesims.info/d/679226/fall-autumn-english.html)
 - Some sort of mini-browser to install mods that don't want to be redistributed
 ### Modders & creators:
 If you'd like to get involved, please make a pull request, issue or [contact me on ModTheSims](https://modthesims.info/member.php?u=10346421).  
