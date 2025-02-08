@@ -11,6 +11,31 @@ Target amd64-unicode
 !include "WinVer.nsh"
 !include "LogicLib.nsh"
 
+Var EAINSTDIR
+Var STEAMINSTDIR
+Var Platform
+;-------------------------------------------------------------------------------
+; Steam game directory
+;-------------------------------------------------------------------------------
+Function .onInit
+	ReadRegStr $STEAMINSTDIR HKLM "SOFTWARE\WOW6432Node\Sims(Steam)\The Sims 3" "install dir"
+	ReadRegStr $EAINSTDIR HKLM "SOFTWARE\WOW6432Node\Sims\The Sims 3" "Install Dir"
+	StrCmp $STEAMINSTDIR "" 0 +4
+	StrCmp $EAINSTDIR "" 0 +8
+	MessageBox MB_OK|MB_ICONEXCLAMATION "Error: Installation directory not found!" 
+	Abort
+	StrCmp $EAINSTDIR "" 0 +4
+	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims(Steam)\The Sims 3" "install dir"
+	StrCpy $Platform "Steam"
+	StrCmp $INSTDIR "" 0 +5
+	MessageBox MB_YESNO|MB_ICONQUESTION "It looks like you've got The Sims 3 installed on both Steam and the EA App/Disc. The Starter Tool can be installed on both. Select 'Yes' to install for Steam and 'No' to install for the EA App/Disc." IDYES +4
+	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims\The Sims 3" "Install Dir"
+	StrCpy $Platform "EADisc"
+	StrCmp $INSTDIR "" 0 +3
+	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims(Steam)\The Sims 3" "install dir"
+	StrCpy $Platform "Steam"
+FunctionEnd
+
 ;-------------------------------------------------------------------------------
 ; Constants
 !define PRODUCT_NAME "The Sims 3 Starter Tool"
@@ -24,7 +49,6 @@ Target amd64-unicode
 Name "The Sims 3 Starter Tool"
 OutFile "..\bin\TS3StarterTool-Installer.exe"
 RequestExecutionLevel admin
-InstallDir "$PROGRAMFILES\TS3StarterTool"
 SetCompressor /SOLID LZMA
 ManifestDPIAware True
 VIProductVersion "${PRODUCT_VERSION}"
@@ -33,6 +57,7 @@ VIAddVersionKey "LegalCopyright" "${COPYRIGHT}"
 VIAddVersionKey "FileVersion" "${SETUP_VERSION}"
 VIAddVersionKey "ProductName" "${PRODUCT_NAME}"
 VIAddVersionKey "ProductVersion" "${PRODUCT_VERSION}"
+ShowInstDetails show
 
 ;-------------------------------------------------------------------------------
 ; Modern UI Appearance (Installer)
@@ -57,7 +82,6 @@ brandingText "swiffy Installer v1.0"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
-
     !define MUI_PAGE_HEADER_TEXT_INSTALLER "TS3 Starter Tool: Installer"
     !define MUI_WELCOMEPAGE_TITLE_INSTALLER "The Sims 3 Starter Tool: Installer"  ; Unique definition for Installer
 !insertmacro MUI_PAGE_FINISH
@@ -88,117 +112,61 @@ brandingText "swiffy Installer v1.0"
 
 ;-------------------------------------------------------------------------------
 ; Installer Sections
-Section "Mods Folder" Section1
-    AddSize 127670
-    NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/ts3-starter-tool/refs/heads/main/resources/KPST/SP6.7z" "$PROGRAMFILES\TS3StarterTool\temp\SP6.7z" /INSIST /END
-    Pop $0
-    DetailPrint "Katy Perry Sweet Treats download status: $0"
-    SetOutPath "$INSTDIR"
-    Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
-    SetOutPath "$INSTDIR"
-    RMDir /r "$INSTDIR\temp\"
-    WriteUninstaller "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
+Section "The Sims 3 Starter Tool Base" Section1
+	SectionIn RO
+	CreateDirectory '$SMPROGRAMS\The Sims 3 Starter Tool\'
+	WriteUninstaller "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
+	CreateShortCut '$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool.lnk' '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' "" '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' 0
+	WriteRegStr HKLM "swiffy\The Sims 3 Starter Tool" "Steam" "installed"
+	WriteRegStr HKLM "swiffy\The Sims 3 Starter Tool" "EADisc" "installed"
 SectionEnd
 
-Section "Smooth Patch" Section2
-    AddSize 127670
-    NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/ts3-starter-tool/refs/heads/main/resources/KPST/SP6.7z" "$PROGRAMFILES\TS3StarterTool\temp\SP6.7z" /INSIST /END
-    Pop $0
-    DetailPrint "Katy Perry Sweet Treats download status: $0"
-    SetOutPath "$INSTDIR"
-    Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
-    SetOutPath "$INSTDIR"
-    RMDir /r "$INSTDIR\temp\"
-    WriteUninstaller "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
+Section "Mods Folder" Section2
 SectionEnd
 
-Section "Updated GPU Database" Section3
-    AddSize 127670
-    NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/ts3-starter-tool/refs/heads/main/resources/KPST/SP6.7z" "$PROGRAMFILES\TS3StarterTool\temp\SP6.7z" /INSIST /END
-    Pop $0
-    DetailPrint "Katy Perry Sweet Treats download status: $0"
-    SetOutPath "$INSTDIR"
-    Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
-    SetOutPath "$INSTDIR"
-    RMDir /r "$INSTDIR\temp\"
-    WriteUninstaller "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
+Section "Smooth Patch" Section3
 SectionEnd
 
-Section "VRAM Usage Fix" Section4
-    AddSize 127670
-    NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/ts3-starter-tool/refs/heads/main/resources/KPST/SP6.7z" "$PROGRAMFILES\TS3StarterTool\temp\SP6.7z" /INSIST /END
-    Pop $0
-    DetailPrint "Katy Perry Sweet Treats download status: $0"
-    SetOutPath "$INSTDIR"
-    Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
-    SetOutPath "$INSTDIR"
-    RMDir /r "$INSTDIR\temp\"
-    WriteUninstaller "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
+Section "Updated GPU Database" Section4
 SectionEnd
 
-Section "CPU Usage Fix" Section5
-    AddSize 127670
-    NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/ts3-starter-tool/refs/heads/main/resources/KPST/SP6.7z" "$PROGRAMFILES\TS3StarterTool\temp\SP6.7z" /INSIST /END
-    Pop $0
-    DetailPrint "Katy Perry Sweet Treats download status: $0"
-    SetOutPath "$INSTDIR"
-    Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
-    SetOutPath "$INSTDIR"
-    RMDir /r "$INSTDIR\temp\"
-    WriteUninstaller "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
+Section "VRAM Usage Fix" Section5
 SectionEnd
 
-Section "Intel Modern CPU Patch" Section6
-    AddSize 127670
-    NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/ts3-starter-tool/refs/heads/main/resources/KPST/SP6.7z" "$PROGRAMFILES\TS3StarterTool\temp\SP6.7z" /INSIST /END
-    Pop $0
-    DetailPrint "Katy Perry Sweet Treats download status: $0"
-    SetOutPath "$INSTDIR"
-    Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
-    SetOutPath "$INSTDIR"
-    RMDir /r "$INSTDIR\temp\"
-    WriteUninstaller "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
+Section "CPU Usage Fix" Section6
 SectionEnd
 
-Section "GPU Update Fix" Section7
-    AddSize 127670
-    NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/ts3-starter-tool/refs/heads/main/resources/KPST/SP6.7z" "$PROGRAMFILES\TS3StarterTool\temp\SP6.7z" /INSIST /END
-    Pop $0
-    DetailPrint "Katy Perry Sweet Treats download status: $0"
-    SetOutPath "$INSTDIR"
-    Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
-    SetOutPath "$INSTDIR"
-    RMDir /r "$INSTDIR\temp\"
-    WriteUninstaller "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
+Section "Intel Modern CPU Patch" Section7
 SectionEnd
 
-Section /o "Disable network features" Section8
-    AddSize 127670
-    NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/ts3-starter-tool/refs/heads/main/resources/KPST/SP6.7z" "$PROGRAMFILES\TS3StarterTool\temp\SP6.7z" /INSIST /END
-    Pop $0
-    DetailPrint "Katy Perry Sweet Treats download status: $0"
-    SetOutPath "$INSTDIR"
-    Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
-    SetOutPath "$INSTDIR"
-    RMDir /r "$INSTDIR\temp\"
-    WriteUninstaller "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
+Section "GPU Update Fix" Section8
 SectionEnd
 
-Section /o "Katy Perry Sweet Treats" Section9
+Section /o "Disable network features" Section9
+SectionEnd
+
+Section /o "Katy Perry Sweet Treats" Section10
     AddSize 127670
-    NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/ts3-starter-tool/refs/heads/main/resources/KPST/SP6.7z" "$PROGRAMFILES\TS3StarterTool\temp\SP6.7z" /INSIST /END
+    SetDetailsPrint both
+    DetailPrint "Downloading Katy Perry Sweet Treats..."
+    NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/KPST/KPST-Steam.7z" "$INSTDIR\temp\SP6.7z" /INSIST /END
     Pop $0
     DetailPrint "Katy Perry Sweet Treats download status: $0"
     SetOutPath "$INSTDIR"
     Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
     SetOutPath "$INSTDIR"
     RMDir /r "$INSTDIR\temp\"
-    WriteUninstaller "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
 SectionEnd
 
 ;-------------------------------------------------------------------------------
 ; Uninstaller Sections
 Section "Uninstall"
+    ReadRegStr $Platform HKCU "Software\MyApp" "Platform"
+    StrCmp $Platform "EADisc" 0 +3
+    CreateShortCut '$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool (Steam version).lnk' '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' "" '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' 0
+    StrCmp $Platform "Steam" 0 +2
+    CreateShortCut '$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool (EA or disc version).lnk' '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' "" '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' 0
+    MessageBox MB_OK "Platform is $Platform"
     RMDir /r "$INSTDIR\SP6"
     Delete "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
 SectionEnd
@@ -214,5 +182,6 @@ SectionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${Section6} "Section6"
     !insertmacro MUI_DESCRIPTION_TEXT ${Section7} "Section7"
     !insertmacro MUI_DESCRIPTION_TEXT ${Section8} "Section8"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section9} "This stuff pack (SP6) can no longer be legitimately purchased digitally and is therefore considered abandonware. This installer can add it into your game seamlessly."
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section9} "Section9"
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section10} "This stuff pack (SP6) can no longer be legitimately purchased digitally and is therefore considered abandonware. This installer can add it into your game seamlessly."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
