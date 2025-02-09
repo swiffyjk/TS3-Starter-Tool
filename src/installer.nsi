@@ -185,13 +185,35 @@ Section /o "Katy Perry Sweet Treats" Section10
 	AddSize 127670
 	SetDetailsPrint both
 	SetOutPath "$INSTDIR"	
-	
+
+	StrCmp $Platform "Steam" SteamKPST
+	StrCmp $Platform "EA" EAKPST
+
+
+	SteamKPST:
 	DetailPrint "Downloading Katy Perry Sweet Treats..."
 	NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/KPST/KPST-Steam.7z" "$INSTDIR\temp\SP6.7z" /INSIST /END
 	Pop $0
 	DetailPrint "Katy Perry Sweet Treats download status: $0"
-	SetOutPath "$INSTDIR"
 	Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
+	
+	
+	Goto NonRegionSpecificKPST
+	
+
+	EAKPST:
+	DetailPrint "Downloading Katy Perry Sweet Treats..."
+	NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/KPST/KPST-EA.7z" "$INSTDIR\temp\SP06.7z" /INSIST /END
+	Pop $0
+	DetailPrint "Katy Perry Sweet Treats download status: $0"
+	Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP06.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
+	WriteRegStr HKLM "Software\WOW6432Node\Sims\The Sims 3 Katy Perry Sweet Treats" "Install Dir" "$INSTDIR\SP06"
+	
+	
+	Goto NonRegionSpecificKPST
+
+
+	NonRegionSpecificKPST:
 	RMDir /r "$INSTDIR\temp\"
 SectionEnd
 
