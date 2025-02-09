@@ -14,26 +14,46 @@ Target amd64-unicode
 Var EAINSTDIR
 Var STEAMINSTDIR
 Var Platform
+Var SteamRegDetected
+Var EARegDetected
 ;-------------------------------------------------------------------------------
 ; Steam game directory
 ;-------------------------------------------------------------------------------
 Function .onInit
 	ReadRegStr $STEAMINSTDIR HKLM "SOFTWARE\WOW6432Node\Sims(Steam)\The Sims 3" "install dir"
 	ReadRegStr $EAINSTDIR HKLM "SOFTWARE\WOW6432Node\Sims\The Sims 3" "Install Dir"
-	StrCmp $STEAMINSTDIR "" 0 +4
-	StrCmp $EAINSTDIR "" 0 +8
+
+	;Initial Steam Check
+	StrCmp $STEAMINSTDIR "" 0 SteamOrBoth
+	Goto EAOrNone
+	
+	EAOrNone:
+	StrCmp $EAINSTDIR "" 0 PlatformEqualsEA
+	Goto PlatformEqualsNone
+	
+	SteamOrBoth:
+	StrCmp $EAINSTDIR "" 0 PlatformEqualsBoth
+	Goto PlatformEqualsSteam
+	
+	PlatformEqualsNone:
 	MessageBox MB_OK|MB_ICONEXCLAMATION "Error: Installation directory not found!" 
 	Abort
-	StrCmp $EAINSTDIR "" 0 +4
-	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims(Steam)\The Sims 3" "install dir"
+
+	PlatformEqualsBoth:
+	MessageBox MB_YESNO|MB_ICONQUESTION "It looks like you've got The Sims 3 installed on both Steam and the EA App/Disc. The Starter Tool can be installed on both. Select 'Yes' to install for Steam and 'No' to install for the EA App/Disc." IDYES PlatformEqualsSteam
+	Goto PlatformEqualsEA
+
+	PlatformEqualsSteam:
 	StrCpy $Platform "Steam"
-	StrCmp $INSTDIR "" 0 +5
-	MessageBox MB_YESNO|MB_ICONQUESTION "It looks like you've got The Sims 3 installed on both Steam and the EA App/Disc. The Starter Tool can be installed on both. Select 'Yes' to install for Steam and 'No' to install for the EA App/Disc." IDYES +4
+	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims(Steam)\The Sims 3" "install dir"
+	Goto OnInitFunctionEnd
+
+	PlatformEqualsEA:
+	StrCpy $Platform "EA"
 	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims\The Sims 3" "Install Dir"
-	StrCpy $Platform "EADisc"
-	StrCmp $INSTDIR "" 0 +3
-	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims(Steam)\The Sims 3" "install dir"
-	StrCpy $Platform "Steam"
+	Goto OnInitFunctionEnd
+
+	OnInitFunctionEnd:
 FunctionEnd
 
 ;-------------------------------------------------------------------------------
@@ -113,12 +133,28 @@ brandingText "swiffy Installer v1.0"
 ;-------------------------------------------------------------------------------
 ; Installer Sections
 Section "The Sims 3 Starter Tool Base" Section1
-	SectionIn RO
+	SectionIn RO	
+	DetailPrint "Platform detected as $Platform"
 	CreateDirectory '$SMPROGRAMS\The Sims 3 Starter Tool\'
 	WriteUninstaller "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
 	CreateShortCut '$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool.lnk' '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' "" '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' 0
-	WriteRegStr HKLM "swiffy\The Sims 3 Starter Tool" "Steam" "installed"
-	WriteRegStr HKLM "swiffy\The Sims 3 Starter Tool" "EADisc" "installed"
+	
+	StrCmp $Platform "Steam" SteamReg
+	StrCmp $Platform "EA" EAReg
+
+	SteamReg:
+	DetailPrint "Writing registry info..."
+	WriteRegStr HKLM "Software\The Sims 3 Starter Tool" "Steam" "installed"
+	Goto PostReg
+
+	EAReg:
+	DetailPrint "Writing registry info..."
+	WriteRegStr HKLM "Software\The Sims 3 Starter Tool" "EADisc" "installed"
+	Goto PostReg
+
+	PostReg:
+	
+
 SectionEnd
 
 Section "Mods Folder" Section2
@@ -146,29 +182,78 @@ Section /o "Disable network features" Section9
 SectionEnd
 
 Section /o "Katy Perry Sweet Treats" Section10
-    AddSize 127670
-    SetDetailsPrint both
-    DetailPrint "Downloading Katy Perry Sweet Treats..."
-    NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/KPST/KPST-Steam.7z" "$INSTDIR\temp\SP6.7z" /INSIST /END
-    Pop $0
-    DetailPrint "Katy Perry Sweet Treats download status: $0"
-    SetOutPath "$INSTDIR"
-    Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
-    SetOutPath "$INSTDIR"
-    RMDir /r "$INSTDIR\temp\"
+	AddSize 127670
+	SetDetailsPrint both
+	SetOutPath "$INSTDIR"	
+	
+	DetailPrint "Downloading Katy Perry Sweet Treats..."
+	NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/KPST/KPST-Steam.7z" "$INSTDIR\temp\SP6.7z" /INSIST /END
+	Pop $0
+	DetailPrint "Katy Perry Sweet Treats download status: $0"
+	SetOutPath "$INSTDIR"
+	Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
+	RMDir /r "$INSTDIR\temp\"
 SectionEnd
 
 ;-------------------------------------------------------------------------------
 ; Uninstaller Sections
 Section "Uninstall"
-    ReadRegStr $Platform HKCU "Software\MyApp" "Platform"
-    StrCmp $Platform "EADisc" 0 +3
-    CreateShortCut '$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool (Steam version).lnk' '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' "" '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' 0
-    StrCmp $Platform "Steam" 0 +2
-    CreateShortCut '$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool (EA or disc version).lnk' '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' "" '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' 0
-    MessageBox MB_OK "Platform is $Platform"
-    RMDir /r "$INSTDIR\SP6"
-    Delete "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
+	ReadRegStr $SteamRegDetected HKLM "Software\The Sims 3 Starter Tool" "Steam"
+	ReadRegStr $EARegDetected HKLM "Software\The Sims 3 Starter Tool" "EADisc"
+	Delete "$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool.lnk"
+
+	;UnInitial Steam Check
+	StrCmp $SteamRegDetected "" 0 UnSteamOrBoth
+	Goto UnEAOrNone
+	
+	UnEAOrNone:
+	StrCmp $EARegDetected "" 0 UnPlatformEqualsEA
+	Goto UnPlatformEqualsNone
+	
+	UnSteamOrBoth:
+	StrCmp $EARegDetected "" 0 UnPlatformEqualsBoth
+	Goto UnPlatformEqualsSteam
+	
+	UnPlatformEqualsNone:
+	MessageBox MB_OK|MB_ICONEXCLAMATION "Error: Installation registries not found!" 
+	Abort
+
+	UnPlatformEqualsBoth:
+	MessageBox MB_YESNO|MB_ICONQUESTION "It looks like you've got The Sims 3 AND The Sims 3 Starter Tool installed on both Steam and the EA App/Disc. Select 'Yes' to UNinstall the Starter Tool on Steam and 'No' to UNinstall the Starter Tool on the EA App/Disc." IDYES UnPlatformEqualsSteam
+	Goto UnPlatformEqualsEA
+
+	UnPlatformEqualsSteam:
+	StrCpy $Platform "Steam"
+	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims(Steam)\The Sims 3" "install dir"
+	Goto SteamUninstaller
+
+	UnPlatformEqualsEA:
+	StrCpy $Platform "EA"
+	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims\The Sims 3" "Install Dir"
+	Goto EAUninstaller
+
+	EAUninstaller:
+	DeleteRegValue HKLM "Software\The Sims 3 Starter Tool" "EADisc"
+	StrCmp $SteamRegDetected "" 0 UninstallerSection2
+	Goto UninstallerDeleteRegKey
+
+	SteamUninstaller:
+	DeleteRegValue HKLM "Software\The Sims 3 Starter Tool" "Steam"
+	StrCmp $EARegDetected "" 0 UninstallerSection2
+	Goto UninstallerDeleteRegKey
+	
+	UninstallerDeleteRegKey:
+	DeleteRegKey HKLM "Software\The Sims 3 Starter Tool"
+
+	UninstallerSection2:
+	FindFirst $0 $1 "$SMPROGRAMS\The Sims 3 Starter Tool\*.*"
+	StrCmp $0 "" SMfolderEmpty UninstallerSection3
+	SMfolderEmpty:
+	RMDir /r "$SMPROGRAMS\The Sims 3 Starter Tool\"
+
+	UninstallerSection3:
+	DetailPrint "'$SMPROGRAMS\The Sims 3 Starter Tool' not empty. Not deleting the folder."
+	Delete "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
 SectionEnd
 
 ;-------------------------------------------------------------------------------
