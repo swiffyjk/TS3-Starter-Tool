@@ -56,6 +56,11 @@ Function .onInit
 	OnInitFunctionEnd:
 FunctionEnd
 
+Function TestOnInit
+	ReadRegStr $STEAMPREVINSTALL HKLM "Software\The Sims 3 Starter Tool" "Steam"
+	ReadRegStr $EAPREVINSTALL HKLM "Software\The Sims 3 Starter Tool" "EADisc"
+FunctionEnd
+
 ;-------------------------------------------------------------------------------
 ; Constants
 !define PRODUCT_NAME "The Sims 3 Starter Tool"
