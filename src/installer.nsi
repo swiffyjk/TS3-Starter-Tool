@@ -23,44 +23,32 @@ Function .onInit
 	ReadRegStr $STEAMINSTDIR HKLM "SOFTWARE\WOW6432Node\Sims(Steam)\The Sims 3" "install dir"
 	ReadRegStr $EAINSTDIR HKLM "SOFTWARE\WOW6432Node\Sims\The Sims 3" "Install Dir"
 
-	;Initial Steam Check
-	StrCmp $STEAMINSTDIR "" 0 SteamOrBoth
-	Goto EAOrNone
-	
-	EAOrNone:
-	StrCmp $EAINSTDIR "" 0 PlatformEqualsEA
-	Goto PlatformEqualsNone
-	
-	SteamOrBoth:
-	StrCmp $EAINSTDIR "" 0 PlatformEqualsBoth
-	Goto PlatformEqualsSteam
-	
-	PlatformEqualsNone:
-	MessageBox MB_OK|MB_ICONEXCLAMATION "Error: Installation directory not found!" 
-	Abort
+	${If} "$STEAMINSTDIR" != "" ; If Steam directory is not blank (If Steam installation is detected in registry)
+		${If} "$EAINSTDIR" != "" ; If Steam AND EA directory are not blank (If EA and Steam installations are detected in registry)
+			MessageBox MB_YESNO|MB_ICONQUESTION "It looks like you've got The Sims 3 installed on both Steam and the EA App/Disc. The Starter Tool can be installed on both. Select 'Yes' to install for Steam and 'No' to install for the EA App/Disc." IDYES SteamInit IDNO EAInit
+		${Else} ; If Steam directory is not blank and EA directory is blank (If only Steam installation is detected in registry)
+			Goto SteamInit
+		${EndIf}
+	${ElseIf} "$EAINSTDIR" != "" ; If EA directory is not blank (If only EA installation is detected in registry)
+		Goto EAInit
+	${Else} ; Neither EA nor Steam directory found in registry
+		MessageBox MB_OK|MB_ICONEXCLAMATION "Error: Installation directory not found!" 
+		Abort
+	${EndIf}
 
-	PlatformEqualsBoth:
-	MessageBox MB_YESNO|MB_ICONQUESTION "It looks like you've got The Sims 3 installed on both Steam and the EA App/Disc. The Starter Tool can be installed on both. Select 'Yes' to install for Steam and 'No' to install for the EA App/Disc." IDYES PlatformEqualsSteam
-	Goto PlatformEqualsEA
-
-	PlatformEqualsSteam:
-	StrCpy $Platform "Steam"
-	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims(Steam)\The Sims 3" "install dir"
-	Goto OnInitFunctionEnd
-
-	PlatformEqualsEA:
+	EAInit:
 	StrCpy $Platform "EA"
 	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims\The Sims 3" "Install Dir"
 	Goto OnInitFunctionEnd
 
+	SteamInit:
+	StrCpy $Platform "Steam"
+	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims(Steam)\The Sims 3" "install dir"
+	Goto OnInitFunctionEnd
+
 	OnInitFunctionEnd:
 FunctionEnd
-
-Function TestOnInit
-	ReadRegStr $STEAMPREVINSTALL HKLM "Software\The Sims 3 Starter Tool" "Steam"
-	ReadRegStr $EAPREVINSTALL HKLM "Software\The Sims 3 Starter Tool" "EADisc"
-FunctionEnd
-
+	
 ;-------------------------------------------------------------------------------
 ; Constants
 !define PRODUCT_NAME "The Sims 3 Starter Tool"
@@ -144,25 +132,18 @@ Section "The Sims 3 Starter Tool Base" Section1
 	WriteUninstaller "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
 	CreateShortCut '$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool.lnk' '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' "" '$INSTDIR\Uninstall The Sims 3 Starter Tool.exe' 0
 	
-	StrCmp $Platform "Steam" SteamReg
-	StrCmp $Platform "EA" EAReg
-
-	SteamReg:
-	DetailPrint "Writing registry info..."
-	WriteRegStr HKLM "Software\The Sims 3 Starter Tool" "Steam" "installed"
-	Goto PostReg
-
-	EAReg:
-	DetailPrint "Writing registry info..."
-	WriteRegStr HKLM "Software\The Sims 3 Starter Tool" "EADisc" "installed"
-	Goto PostReg
-
-	PostReg:
-	
+	${If} "$Platform" == "Steam"
+		DetailPrint "Writing registry info..."
+		WriteRegStr HKLM "Software\The Sims 3 Starter Tool" "Steam" "installed"
+	${ElseIf} "$Platform" == "EA"
+		DetailPrint "Writing registry info..."
+		WriteRegStr HKLM "Software\The Sims 3 Starter Tool" "EADisc" "installed"	
+	${EndIf}
 
 SectionEnd
 
 Section "Mods Folder" Section2
+	
 SectionEnd
 
 Section "Smooth Patch" Section3
@@ -191,34 +172,21 @@ Section /o "Katy Perry Sweet Treats" Section10
 	SetDetailsPrint both
 	SetOutPath "$INSTDIR"	
 
-	StrCmp $Platform "Steam" SteamKPST
-	StrCmp $Platform "EA" EAKPST
-
-
-	SteamKPST:
-	DetailPrint "Downloading Katy Perry Sweet Treats..."
-	NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/KPST/KPST-Steam.7z" "$INSTDIR\temp\SP6.7z" /INSIST /END
-	Pop $0
-	DetailPrint "Katy Perry Sweet Treats download status: $0"
-	Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
+	${If} "$Platform" == "Steam"
+		DetailPrint "Downloading Katy Perry Sweet Treats..."
+		NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/KPST/KPST-Steam.7z" "$INSTDIR\temp\SP6.7z" /INSIST /END
+		Pop $0
+		DetailPrint "Katy Perry Sweet Treats (Steam version) download status: $0"
+		Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
+	${ElseIf} "$Platform" == "EA"
+		DetailPrint "Downloading Katy Perry Sweet Treats..."
+		NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/KPST/KPST-EA.7z" "$INSTDIR\temp\SP06.7z" /INSIST /END
+		Pop $0
+		DetailPrint "Katy Perry Sweet Treats (EA/Disc version) download status: $0"
+		Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP06.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
+		WriteRegStr HKLM "Software\WOW6432Node\Sims\The Sims 3 Katy Perry Sweet Treats" "Install Dir" "$INSTDIR\SP06"
+	${EndIf}
 	
-	
-	Goto NonRegionSpecificKPST
-	
-
-	EAKPST:
-	DetailPrint "Downloading Katy Perry Sweet Treats..."
-	NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/KPST/KPST-EA.7z" "$INSTDIR\temp\SP06.7z" /INSIST /END
-	Pop $0
-	DetailPrint "Katy Perry Sweet Treats download status: $0"
-	Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP06.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
-	WriteRegStr HKLM "Software\WOW6432Node\Sims\The Sims 3 Katy Perry Sweet Treats" "Install Dir" "$INSTDIR\SP06"
-	
-	
-	Goto NonRegionSpecificKPST
-
-
-	NonRegionSpecificKPST:
 	RMDir /r "$INSTDIR\temp\"
 SectionEnd
 
