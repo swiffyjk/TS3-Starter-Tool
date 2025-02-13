@@ -17,8 +17,7 @@ Var Platform
 Var SteamRegDetected
 Var EARegDetected
 ;-------------------------------------------------------------------------------
-; Steam game directory
-;-------------------------------------------------------------------------------
+; Get game directory and platform
 Function .onInit
 	ReadRegStr $STEAMINSTDIR HKLM "SOFTWARE\WOW6432Node\Sims(Steam)\The Sims 3" "install dir"
 	ReadRegStr $EAINSTDIR HKLM "SOFTWARE\WOW6432Node\Sims\The Sims 3" "Install Dir"
@@ -32,7 +31,7 @@ Function .onInit
 	${ElseIf} "$EAINSTDIR" != "" ; If EA directory is not blank (If only EA installation is detected in registry)
 		Goto EAInit
 	${Else} ; Neither EA nor Steam directory found in registry
-		MessageBox MB_OK|MB_ICONEXCLAMATION "Error: Installation directory not found!" 
+		MessageBox MB_OK|MB_ICONEXCLAMATION "Error: Couldn't find The Sims 3! Make sure you've got it installed on Steam, the EA App, or fully Super-Patched if using the discs. See the 'What's this?' section of the Starter Guide for more info." 
 		Abort
 	${EndIf}
 
@@ -192,62 +191,44 @@ SectionEnd
 
 ;-------------------------------------------------------------------------------
 ; Uninstaller Sections
-Section "Uninstall"
+Function un.onInit
 	ReadRegStr $SteamRegDetected HKLM "Software\The Sims 3 Starter Tool" "Steam"
 	ReadRegStr $EARegDetected HKLM "Software\The Sims 3 Starter Tool" "EADisc"
-	Delete "$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool.lnk"
 
-	;UnInitial Steam Check
-	StrCmp $SteamRegDetected "" 0 UnSteamOrBoth
-	Goto UnEAOrNone
-	
-	UnEAOrNone:
-	StrCmp $EARegDetected "" 0 UnPlatformEqualsEA
-	Goto UnPlatformEqualsNone
-	
-	UnSteamOrBoth:
-	StrCmp $EARegDetected "" 0 UnPlatformEqualsBoth
-	Goto UnPlatformEqualsSteam
-	
-	UnPlatformEqualsNone:
-	MessageBox MB_OK|MB_ICONEXCLAMATION "Error: Installation registries not found!" 
-	Abort
+	${If} "$SteamRegDetected" != ""	; If Steam key is not blank (If Steam key is detected in registry)
+		${If} "$EARegDetected" != "" ; If Steam AND EA key are not blank (If EA and Steam keys are detected in registry)
+			MessageBox MB_YESNO|MB_ICONQUESTION "It looks like you've got The Sims 3 AND The Sims 3 Starter Tool installed on both Steam and the EA App/Disc. Select 'Yes' to Uninstall the Starter Tool on Steam and 'No' to Uninstall the Starter Tool on the EA App/Disc." IDYES SteamUnInit IDNO EAUnInit
+		${Else} ; If Steam directory is not blank and EA directory is blank (If only Steam key is detected in registry)
+			Goto SteamUnInit
+		${EndIf}
+	${ElseIf} "$EARegDetected" != "" ; If EA directory is not blank (If only EA key is detected in registry)
+		Goto EAUnInit
+	${Else} ; Neither EA nor Steam directory found in registry
+		MessageBox MB_OK|MB_ICONEXCLAMATION "Error: Registry keys not found! It doesn't look like you've got The Sims 3 Starter Tool installed. Please contact Swiffy on Discord for help if you think you do." 
+		Abort
+	${EndIf}
 
-	UnPlatformEqualsBoth:
-	MessageBox MB_YESNO|MB_ICONQUESTION "It looks like you've got The Sims 3 AND The Sims 3 Starter Tool installed on both Steam and the EA App/Disc. Select 'Yes' to UNinstall the Starter Tool on Steam and 'No' to UNinstall the Starter Tool on the EA App/Disc." IDYES UnPlatformEqualsSteam
-	Goto UnPlatformEqualsEA
-
-	UnPlatformEqualsSteam:
+	SteamUnInit:
 	StrCpy $Platform "Steam"
-	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims(Steam)\The Sims 3" "install dir"
-	Goto SteamUninstaller
+	Goto UnOnInitFunctionEnd
 
-	UnPlatformEqualsEA:
+	EAUnInit:
 	StrCpy $Platform "EA"
-	ReadRegStr $INSTDIR HKLM "SOFTWARE\WOW6432Node\Sims\The Sims 3" "Install Dir"
-	Goto EAUninstaller
+	Goto UnOnInitFunctionEnd
 
-	EAUninstaller:
-	DeleteRegValue HKLM "Software\The Sims 3 Starter Tool" "EADisc"
-	StrCmp $SteamRegDetected "" 0 UninstallerSection2
-	Goto UninstallerDeleteRegKey
+	UnOnInitFunctionEnd:
+FunctionEnd
 
-	SteamUninstaller:
-	DeleteRegValue HKLM "Software\The Sims 3 Starter Tool" "Steam"
-	StrCmp $EARegDetected "" 0 UninstallerSection2
-	Goto UninstallerDeleteRegKey
+Section "Uninstall"
+	${If} "$Platform" == "Steam"	
+		DeleteRegValue HKLM "Software\The Sims 3 Starter Tool" "Steam"
+	${ElseIf} "$Platform" == "EA"
+		DeleteRegValue HKLM "Software\The Sims 3 Starter Tool" "EADisc"
+	${EndIf}
 	
-	UninstallerDeleteRegKey:
+	Delete "$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool.lnk"
 	DeleteRegKey HKLM "Software\The Sims 3 Starter Tool"
-
-	UninstallerSection2:
-	FindFirst $0 $1 "$SMPROGRAMS\The Sims 3 Starter Tool\*.*"
-	StrCmp $0 "" SMfolderEmpty UninstallerSection3
-	SMfolderEmpty:
 	RMDir /r "$SMPROGRAMS\The Sims 3 Starter Tool\"
-
-	UninstallerSection3:
-	DetailPrint "'$SMPROGRAMS\The Sims 3 Starter Tool' not empty. Not deleting the folder."
 	Delete "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
 SectionEnd
 
