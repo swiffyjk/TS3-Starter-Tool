@@ -48,6 +48,7 @@ Var UninstallerPath
 Var SOFTWAREORWOW6432NODE
 Var RegCountry
 Var RegLocale
+Var RegLocale2
 
 Function .onInit
 	;-------------------------------------------------------------------------------
@@ -301,11 +302,24 @@ Section /o "Katy Perry Sweet Treats" Section10
 		SetOutPath "$PROGRAMFILES32\Common Files\EAInstaller\The Sims 3\The Sims 3 Katy Perry Sweet Treats"	
 		Nsis7z::ExtractWithDetails "$INSTDIR\temp\Cleanup.7z" "Extracting Katy Perry Sweet Treats Cleanup.7z... %s"
 
-		ReadRegStr $RegLocale HKLM "$SOFTWAREORWOW6432NODE\Origin Games\sims3_dd" "Locale"
+		ReadRegStr $RegLocale2 HKLM "$SOFTWAREORWOW6432NODE\Origin Games\sims3_dd" "Locale"
+
+
+		; Experimental code, still trying to make the pack detected on EA
+		ReadRegStr $RegLocale HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3" "Locale"
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "DisplayName" "The Sims 3 Katy Perry's Sweet Treats" ; Should be "The Sims™ 3 Katy Perry's Sweet Treats" but NSIS doesn't like that
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "Locale" "$RegLocale"
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "Install Dir" "$INSTDIR"
+		WriteRegDWORD HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "InstallStart" 0
+		WriteRegDWORD HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "ProductID" 13
+		WriteRegDWORD HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "SKU" 7
+
+
+
 
 		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "Install Dir" "$INSTDIR\SP06"
 		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Origin Games\71444" "DisplayName" "The Sims 3 Katy Perry's Sweet Treats" ; Should be "The Sims™ 3 Katy Perry's Sweet Treats" but NSIS doesn't like that
-		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Origin Games\71444" "Locale" "$RegLocale"
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Origin Games\71444" "Locale" "$RegLocale2"
 
 		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3\DLCs\The Sims 3 Katy Perry Sweet Treats" "UninstallerArgs" "uninstall_pdlc -autologging"
 		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3\DLCs\The Sims 3 Katy Perry Sweet Treats" "UninstallerPath" "$\"$PROGRAMFILES32\Common Files\EAInstaller\The Sims 3\The Sims 3 Katy Perry Sweet Treats\Cleanup.exe$\""
