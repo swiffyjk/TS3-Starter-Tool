@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest a feature to be implemented in the Starter Tool
-title: "[Feature request] ..."
+title: ''
 labels: feature request
 assignees: swiffyjk
 
