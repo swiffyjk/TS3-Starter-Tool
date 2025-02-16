@@ -1,8 +1,11 @@
 Unicode true
 Target amd64-unicode
 
+!define MUI_TITLE "The Sims 3 Starter Tool: Installer (v$Version)"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "..\assets\InstallerImage.bmp"
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "..\assets\UninstallerImage.bmp"
+!define MUI_ICON "..\assets\InstallerIcon.ico"
+!define MUI_UNICON "..\assets\UninstallerIcon.ico"
 
 ;-------------------------------------------------------------------------------
 ; Includes
@@ -49,7 +52,7 @@ Var RegLocale
 Function .onInit
 	;-------------------------------------------------------------------------------
 	; Variables
-	StrCpy $Version 1.0
+	StrCpy $Version 0.1
 	${If} ${RunningX64}
 		StrCpy $SOFTWAREORWOW6432NODE "SOFTWARE\WOW6432Node"
 	${Else}
@@ -88,12 +91,13 @@ FunctionEnd
 	
 ;-------------------------------------------------------------------------------
 ; Constants
+Caption "The Sims 3 Starter Tool: Installer"
 !define PRODUCT_NAME $Version 
 !define PRODUCT_DESCRIPTION "The Sims 3 Starter Tool"
 !define COPYRIGHT "swiffy / EA"
-!define VERSION 1.0
-!define PRODUCT_VERSION 1.0.0.0
-!define SETUP_VERSION 1.0.0.0
+!define VERSION 0.1
+!define PRODUCT_VERSION 0.1.0.0
+!define SETUP_VERSION 0.1.0.0
 
 ;-------------------------------------------------------------------------------
 ; Installer Setup
@@ -112,7 +116,7 @@ ShowInstDetails show
 
 ;-------------------------------------------------------------------------------
 ; Modern UI Appearance
-brandingText "swiffy Installer v1.0"
+brandingText "swiffy Installer v0.1"
 !define MUI_ABORTWARNING
 !define MUI_INSTFILESPAGE_COLORS "FFFFFF 000000"
 !define MUI_HEADERIMAGE
@@ -121,10 +125,10 @@ brandingText "swiffy Installer v1.0"
 !define MUI_HEADERIMAGE_UNBITMAP "..\assets\UninstallerHeader.bmp"
 !define MUI_HEADERIMAGE_BITMAP_STRETCH AspectFitHeight
 !define MUI_HEADERIMAGE_UNBITMAP_STRETCH AspectFitHeight
-!define MUI_ICON "..\assets\InstallerIcon.ico"
-!define MUI_UNICON "..\assets\UninstallerIcon.ico"
 
 !define MUI_WELCOMEPAGE_TEXT "Welcome to The Sims 3 Starter Tool Installer. $\n$\nThis installer will apply the most essential fixes to your Sims 3 game, letting the game run much better, with less bugs and frame drops! It also equips you with a simple Mods folder to add mods and custom content. $\n$\nThis installer requires an existing installed copy of The Sims 3 using the discs, Steam or the EA App. $\n$\nPlease ensure you are using the latest version of this starter tool directly from the GitHub!"
+!define MUI_PAGE_HEADER_TEXT_INSTALLER "TS3 Starter Tool: Installer"
+!define MUI_WELCOMEPAGE_TITLE "The Sims 3 Starter Tool: Installer (v$Version)" 
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 
 ;-------------------------------------------------------------------------------
@@ -133,8 +137,6 @@ brandingText "swiffy Installer v1.0"
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
-    !define MUI_PAGE_HEADER_TEXT_INSTALLER "TS3 Starter Tool: Installer"
-    !define MUI_WELCOMEPAGE_TITLE_INSTALLER "The Sims 3 Starter Tool: Installer (v$Version)" 
 !insertmacro MUI_PAGE_FINISH
 
 ;-------------------------------------------------------------------------------
@@ -199,42 +201,50 @@ Section "The Sims 3 Starter Tool Base" Section1
 	
 SectionEnd
 
-Section "Mods Folder" Section2
+Section /o "Mods Folder" Section2 ; /o and RO temporary to grey out
+	SectionIn RO
 	AddSize 1
 	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
-Section "Smooth Patch" Section3
+Section /o "Smooth Patch" Section3 ; /o and RO temporary to grey out
+	SectionIn RO
 	AddSize 1
 	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
-Section "Updated GPU Database" Section4
+Section /o "Updated GPU Database" Section4 ; /o and RO temporary to grey out
+	SectionIn RO
 	AddSize 1
 	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
-Section "VRAM Usage Fix" Section5
+Section /o "VRAM Usage Fix" Section5 ; /o and RO temporary to grey out
+	SectionIn RO
 	AddSize 1
 	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
-Section "CPU Usage Fix" Section6
+Section /o "CPU Usage Fix" Section6 ; /o and RO temporary to grey out
+	SectionIn RO
 	AddSize 1
 	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
-Section "Intel Modern CPU Patch" Section7
+Section /o "Intel Modern CPU Patch" Section7 ; /o and RO temporary to grey out
+	SectionIn RO
 	AddSize 1
 	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
-Section "GPU Update Fix" Section8
+Section /o "GPU Update Fix" Section8 ; /o and RO temporary to grey out
+	SectionIn RO
 	AddSize 1
 	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
-Section /o "Disable network features" Section9
+Section /o "Disable network features" Section9 ; RO temporary to grey out
+	SectionIn RO
 	AddSize 1
 	IntOp $TotalSize $TotalSize + 1
 SectionEnd
@@ -362,14 +372,14 @@ SectionEnd
 ;-------------------------------------------------------------------------------
 ; MUI Descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section1} "Section1"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section2} "Section2"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section3} "Section3"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section4} "Section4"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section5} "Section5"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section6} "Section6"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section7} "Section7"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section8} "Section8"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section9} "Section9"
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section1} "The key files of the Starter Tool. No fixes are implemented here, but it's necessary for the installer to work properly and be uninstallable."
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section2} "This feature hasn't been implemented yet. Stay tuned for an update!"
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section3} "This feature hasn't been implemented yet. Stay tuned for an update!"
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section4} "This feature hasn't been implemented yet. Stay tuned for an update!"
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section5} "This feature hasn't been implemented yet. Stay tuned for an update!"
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section6} "This feature hasn't been implemented yet. Stay tuned for an update!"
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section7} "This feature hasn't been implemented yet. Stay tuned for an update!"
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section8} "This feature hasn't been implemented yet. Stay tuned for an update!"
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section9} "This feature hasn't been implemented yet. Stay tuned for an update!"
     !insertmacro MUI_DESCRIPTION_TEXT ${Section10} "This stuff pack (SP6) can no longer be legitimately purchased digitally and is therefore considered abandonware. This installer can add it into your game seamlessly."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
