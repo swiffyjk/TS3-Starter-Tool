@@ -23,8 +23,8 @@ If you know how to find your game version, this should be either 1.67 or 1.69. B
 ### Will this be on macOS?  
 For the foreseeable future - no. The Sims 3 shouldn't require any fixes to *run* on macOS, but I definitely understand that you may want the fix mods it comes with.  
 Unfortunately, I do not have a Mac to test this with, so for now I'd recommend going to the links for the fixes yourself, and seeing if they're compatible with the macOS version of the game.  
-### Does this tool install The Sims 3 game and all DLCs, like the TS1/TS2 Starter Pack?  
-*No.* As The Sims 3 is still legitimately digitally obtainable, I cannot bundle the game nor its purchasable DLCs in this starter pack.  
+### Does this tool install The Sims 3 game and all DLCs?  
+*No.* As The Sims 3 is still legitimately digitally obtainable, I cannot bundle the game nor its purchasable DLCs in this starter tool.  
 The Katy Perry Sweet Treats pack is an exception to this rule, as it is *not legitimately digitally obtainable*, and is therefore considered abandonware. This pack can optionally be installed using the tool.  
 ### What features are currently included?  
 \**Not enabled by default*
