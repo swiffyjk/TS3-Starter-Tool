@@ -177,6 +177,7 @@ Section "The Sims 3 Starter Tool Base" Section1
 	SetOutPath "$INSTDIR\Starter Tool\"
 	File "..\assets\InstallerIcon.ico"
 	SetFileAttributes "$INSTDIR\Starter Tool\InstallerIcon.ico" hidden
+	SetOutPath "$INSTDIR"
 	
 	${If} "$Platform" == "Steam"
 		DetailPrint "Writing registry info..."
@@ -309,7 +310,14 @@ Section /o "Katy Perry Sweet Treats" Section10
 		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3\DLCs\The Sims 3 Katy Perry Sweet Treats" "UninstallerArgs" "uninstall_pdlc -autologging"
 		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3\DLCs\The Sims 3 Katy Perry Sweet Treats" "UninstallerPath" "$\"$PROGRAMFILES32\Common Files\EAInstaller\The Sims 3\The Sims 3 Katy Perry Sweet Treats\Cleanup.exe$\""
 
-
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Microsoft\Windows\CurrentVersion\Uninstall\{C05D8CDB-417D-4335-A38C-A0659EDFD6B8}_The Sims 3 Katy Perry Sweet Treats" "DisplayIcon" "$\"$INSTDIR\SP06\Sims3SP06.ico$\""
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Microsoft\Windows\CurrentVersion\Uninstall\{C05D8CDB-417D-4335-A38C-A0659EDFD6B8}_The Sims 3 Katy Perry Sweet Treats" "DisplayName" "The Sims 3 Katy Perry's Sweet Treats" ; Should be "The Sims™ 3 Katy Perry's Sweet Treats" but NSIS doesn't like that
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Microsoft\Windows\CurrentVersion\Uninstall\{C05D8CDB-417D-4335-A38C-A0659EDFD6B8}_The Sims 3 Katy Perry Sweet Treats" "DisplayVersion" "1.0.0.0"
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Microsoft\Windows\CurrentVersion\Uninstall\{C05D8CDB-417D-4335-A38C-A0659EDFD6B8}_The Sims 3 Katy Perry Sweet Treats" "HelpLink" "http://www.ea.com"
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Microsoft\Windows\CurrentVersion\Uninstall\{C05D8CDB-417D-4335-A38C-A0659EDFD6B8}_The Sims 3 Katy Perry Sweet Treats" "InstallLocation" "$INSTDIR"
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Microsoft\Windows\CurrentVersion\Uninstall\{C05D8CDB-417D-4335-A38C-A0659EDFD6B8}_The Sims 3 Katy Perry Sweet Treats" "Publisher" "Electronic Arts Inc."
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Microsoft\Windows\CurrentVersion\Uninstall\{C05D8CDB-417D-4335-A38C-A0659EDFD6B8}_The Sims 3 Katy Perry Sweet Treats" "UninstallString" "$\"$PROGRAMFILES32\Common Files\EAInstaller\The Sims 3\The Sims 3 Katy Perry Sweet Treats\Cleanup.exe$\" uninstall_pdlc -autologging"
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Microsoft\Windows\CurrentVersion\Uninstall\{C05D8CDB-417D-4335-A38C-A0659EDFD6B8}_The Sims 3 Katy Perry Sweet Treats" "URLInfoAbout" "http://www.ea.com"
 	${EndIf}
 	
 	RMDir /r "$INSTDIR\temp\"
@@ -342,7 +350,7 @@ Section "Uninstall"
 
 	${If} "$Platform" == "Steam"
 		Delete "$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool (Steam).lnk"
-		RMDir /r "$INSTDIR\SP6\"
+		RMDir /r "$INSTDIR\..\SP6"
 		
 		DeleteRegKey HKLM "$SOFTWAREORWOW6432NODE\Electronic Arts\Sims(Steam)\The Sims 3 Katy Perry Sweet Treats\ergc"
 		DeleteRegKey HKLM "$SOFTWAREORWOW6432NODE\Sims(Steam)\The Sims 3 Katy Perry Sweet Treats"
@@ -350,11 +358,12 @@ Section "Uninstall"
 		StrCpy $0 "$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool (EA~Disc).lnk"
 	${ElseIf} "$Platform" == "EA"
 		Delete "$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool (EA~Disc).lnk"
-		RMDir /r "$INSTDIR\SP06\"
+		RMDir /r "$INSTDIR\..\SP06"
 
 		DeleteRegKey HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats"
 		DeleteRegKey HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3\DLCs\The Sims 3 Katy Perry Sweet Treats"
 		DeleteRegKey HKLM "$SOFTWAREORWOW6432NODE\Origin Games\71444"
+		DeleteRegKey HKLM "$SOFTWAREORWOW6432NODE\Microsoft\Windows\CurrentVersion\Uninstall\{C05D8CDB-417D-4335-A38C-A0659EDFD6B8}_The Sims 3 Katy Perry Sweet Treats"
 
 		StrCpy $0 "$SMPROGRAMS\The Sims 3 Starter Tool\Uninstall The Sims 3 Starter Tool (Steam).lnk"
 	${EndIf}
@@ -365,8 +374,8 @@ Section "Uninstall"
 		RMDir /r "$SMPROGRAMS\The Sims 3 Starter Tool\"
     ${EndIf}
 
-	RMDir /r "$INSTDIR\Starter Tool\"
-	Delete "$INSTDIR\Starter Tool\Uninstall The Sims 3 Starter Tool.exe"
+	RMDir /r "$INSTDIR"
+	Delete "$INSTDIR\Uninstall The Sims 3 Starter Tool.exe"
 SectionEnd
 
 ;-------------------------------------------------------------------------------
