@@ -268,7 +268,7 @@ Section /o "Katy Perry Sweet Treats" Section10
 		ReadRegStr $RegCountry HKLM "$SOFTWAREORWOW6432NODE\Sims(Steam)\The Sims 3" "country"
 		ReadRegStr $RegLocale HKLM "$SOFTWAREORWOW6432NODE\Sims(Steam)\The Sims 3" "locale"
 
-		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Electronic Arts\Sims(Steam)\The Sims 3 Katy Perry Sweet Treats\ergc" "" "KPST-TS3S-TART-ERPA-CKXY"
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Electronic Arts\Sims(Steam)\The Sims 3 Katy Perry Sweet Treats\ergc" "" "KBJS-ZVEV-T47Q-D823-0FLT"
 
 		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims(Steam)\The Sims 3 Katy Perry Sweet Treats" "contentid" "sims3_sp06_sku7"
 		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims(Steam)\The Sims 3 Katy Perry Sweet Treats" "country" "$RegCountry"
