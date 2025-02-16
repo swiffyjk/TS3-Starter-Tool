@@ -11,8 +11,9 @@ This tool is a Windows installer that applies various fixes to The Sims 3's game
 # Download:
 <a href="https://github.com/swiffyjk/TS3-Starter-Tool/releases/download/v0.1/TS3StarterTool-Installer.exe">
   <img src="https://github.com/user-attachments/assets/9644fbe7-78b1-4485-972b-27ab9f38e981" width="10%" height="10%" alt="Download icon">
-</a>
-</br><b>.exe Installer</b></br>
+</a>  
+  
+[**.exe Installer**](https://github.com/swiffyjk/TS3-Starter-Tool/releases/download/v0.1/TS3StarterTool-Installer.exe)
 
 ## Frequently Asked Questions  
 ### What version of the game do I need?
