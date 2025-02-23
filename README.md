@@ -27,9 +27,10 @@ Unfortunately, I do not have a Mac to test this with, so for now I'd recommend g
 *No.* As The Sims 3 is still legitimately digitally obtainable, I cannot bundle the game nor its purchasable DLCs in this starter tool.  
 The Katy Perry Sweet Treats pack is an exception to this rule, as it is *not legitimately digitally obtainable*, and is therefore considered abandonware. This pack can optionally be installed using the tool.  
 ### What features are currently included?  
-\**Not enabled by default*
+\* *Not enabled by default*  
+† *Steam only*
 #### Experimental - testing features  
-- Installs the Katy Perry Sweet Treats pack (abandonware)\*
+- Installs the Katy Perry Sweet Treats pack (abandonware)\*[†](https://github.com/swiffyjk/TS3-Starter-Tool/issues/1)
 #### Placeholder features  
 - [Installs a ready-to-use mods folder layout](https://github.com/swiffyjk/TS3-Starter-Tool/wiki/How-to-install-mods-and-custom-content)
 - [Installs LazyDuchess' Smooth Patch](https://modthesims.info/d/658759/smooth-patch-2-1.html)
