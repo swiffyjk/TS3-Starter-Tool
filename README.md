@@ -50,3 +50,6 @@ All mods used either:
 - Have personal permission from the creators themselves to be used
 - Are from creators with TOUs that permit their creations to be redistributed
 - Are from other creators, but are installed through their official source using a web browser (and therefore not actually redistributed). This is currently not implemented.
+
+### Dependencies:
+Depends on nothing! Just download the installer .exe
