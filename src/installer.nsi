@@ -50,6 +50,34 @@ Var RegCountry
 Var RegLocale
 Var RegLocale2
 
+;-------------------------------------------------------------------------------
+;|Multi-language implementation                       |
+;|                     |   Locale IDs  |              |
+;|Language             | Steam |  EA   | Folder       |
+;------------------------------------------------------
+; Czech                | cs-cz | cs_CZ | The Sims 3   | 
+; Danish               | da-dk | da_DK | The Sims 3   | 
+; German               | de-de | de_DE | Die Sims 3   |  
+; Greek                |   ?   | el_GR | The Sims 3   |  
+; English              | en-US | en_US | The Sims 3   |  
+; Spanish              | es-es | es_ES | Los Sims 3   |  
+; Finnish              | fi-fi | fi_FI | The Sims 3   |  
+; French               | fr-fr | fr_FR | Les Sims 3   |   
+; Hungarian            | hu-hu | hu_HU | The Sims 3   |   
+; Italian              | it-it | it_IT | The Sims 3   |   
+; Japanese             |   ?   | ja_JP | ザ･シムズ３   |   
+; Korean               | ko-kr | ko_KR | 심즈 3       |   
+; Dutch                | nl-nl | nl_NL | De Sims 3    |   
+; Norwegian Bokmål     | no-no | no_NO | The Sims 3   |   
+; Polish               | pl-pl | pl_PL | The Sims 3   |   
+; Portuguese (Brazil)  |   ?   | pt_BR | The Sims 3   |   
+; Portuguese (Portugal)| pt-pt | pt_PT | Os Sims 3    |   
+; Russian              | ru-ru | ru_RU | The Sims 3   |   
+; Swedish              | sv-se | sv_SE | The Sims 3   |   
+; Chinese (Traditional)| zh-tw | zh_TW | 模擬市民3     |   
+
+
+
 Function .onInit
 	;-------------------------------------------------------------------------------
 	; Variables
