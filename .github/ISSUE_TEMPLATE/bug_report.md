@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Report an issue with the Starter Tool
-title: "[Bug report] ..."
+title: ''
 labels: bug report
 assignees: swiffyjk
 

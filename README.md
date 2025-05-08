@@ -15,6 +15,29 @@ This tool is a Windows installer that applies various fixes to The Sims 3's game
   
 [**.exe Installer**](https://github.com/swiffyjk/TS3-Starter-Tool/releases/download/v0.1/TS3StarterTool-Installer.exe)
 
+# Features:
+\* *Not enabled by default*  
+🟩 Implemented, well-tested  
+🟨 Implemented, experimental & untested  
+🟥 Unimplemented  
+⬜ Planned in the long term, but impossible/too difficult for now  
+⬛ Not planned
+|*Feature*|Steam|EA App|
+| :---         |     :---:      |     :---:      |
+|Katy Perry Sweet Treats installer*|🟨|⬜|
+|Mods folder template|🟥|🟥|
+|Smooth Patch|🟥|🟥|
+|GPU database update|🟥|🟥|
+|Increase CPU usage|🟥|🟥|
+|Increase VRAM usage|🟥|🟥|
+|Intel Alder Lake Patch|🟥|🟥|
+|Disable network connectivity*|🟥|🟥|
+|Simler90's Gameplay Core Fixes|🟥|🟥|
+|Options.ini persistence script|🟥|🟥|
+|Browser integration for non-redistributable mods|⬜|⬜|
+|macOS port|⬜|⬜|
+|Linux port|⬛|⬛|
+
 ## Frequently Asked Questions  
 ### What version of the game do I need?
 The latest version of the game on Steam or the EA App. (these auto-update, so don't worry about trying to check for updates!)  
@@ -23,26 +46,10 @@ If you know how to find your game version, this should be either 1.67 or 1.69. B
 ### Will this be on macOS?  
 For the foreseeable future - no. The Sims 3 shouldn't require any fixes to *run* on macOS, but I definitely understand that you may want the fix mods it comes with.  
 Unfortunately, I do not have a Mac to test this with, so for now I'd recommend going to the links for the fixes yourself, and seeing if they're compatible with the macOS version of the game.  
-### Does this tool install The Sims 3 game and all DLCs, like the TS1/TS2 Starter Pack?  
-*No.* As The Sims 3 is still legitimately digitally obtainable, I cannot bundle the game nor its purchasable DLCs in this starter pack.  
+### Does this tool install The Sims 3 game and all DLCs?  
+*No.* As The Sims 3 is still legitimately digitally obtainable, I cannot bundle the game nor its purchasable DLCs in this starter tool.  
 The Katy Perry Sweet Treats pack is an exception to this rule, as it is *not legitimately digitally obtainable*, and is therefore considered abandonware. This pack can optionally be installed using the tool.  
-### What features are currently included?  
-\**Not enabled by default*
-#### Experimental - testing features  
-- Installs the Katy Perry Sweet Treats pack (abandonware)\*
-#### Placeholder features  
-- [Installs a ready-to-use mods folder layout](https://github.com/swiffyjk/TS3-Starter-Tool/wiki/How-to-install-mods-and-custom-content)
-- [Installs LazyDuchess' Smooth Patch](https://modthesims.info/d/658759/smooth-patch-2-1.html)
-- Updates the game's GPU database with modern graphics cards
-- Increases CPU usage for low-mid range CPUs
-- Fixes incorrect amount of VRAM being used
-- [Patches game to run on new Intel CPUs with LazyDuchess' Intel Alder Lake Patch](https://modthesims.info/d/667734/intel-alder-lake-patch.html)
-- Disables network connectivity to reduce unnecessary lag\*
-#### Long-term future features  
-- [Simler90's Gameplay Fixes](https://modthesims.info/d/659969/simler90-s-gameplay-core-mod.html) [(with warnings for NRaas users)](https://www.nraas.net/community/announcements/topic11969)
-- Options.ini persistence script, prevents GPU updates resetting options
-- English dialect-change mods, e.g. [my Fall → Autumn Mod](https://modthesims.info/d/679226/fall-autumn-english.html)
-- Some sort of mini-browser to install mods that don't want to be redistributed
+
 ### Modders & creators:
 If you'd like to get involved, please make a pull request, issue or [contact me on ModTheSims](https://modthesims.info/member.php?u=10346421).  
 All mods used either:
