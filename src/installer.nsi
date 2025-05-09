@@ -1,5 +1,5 @@
-Unicode true
-Target amd64-unicode
+﻿Unicode true ; file must be encoded in UTF-8 with BOM
+Target amd64-unicode 
 
 !define MUI_TITLE "The Sims 3 Starter Tool: Installer (v$Version)"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "..\assets\InstallerImage.bmp"
@@ -43,40 +43,13 @@ Var Platform
 Var SteamRegDetected
 Var EARegDetected
 Var Version
-Var TotalSize
 Var UninstallerPath
 Var SOFTWAREORWOW6432NODE
+Var Locale
 Var RegCountry
 Var RegLocale
 Var RegLocale2
-
-;-------------------------------------------------------------------------------
-;|Multi-language implementation                       |
-;|                     |   Locale IDs  |              |
-;|Language             | Steam |  EA   | Folder       |
-;------------------------------------------------------
-; Czech                | cs-cz | cs_CZ | The Sims 3   | 
-; Danish               | da-dk | da_DK | The Sims 3   | 
-; German               | de-de | de_DE | Die Sims 3   |  
-; Greek                |   ?   | el_GR | The Sims 3   |  
-; English              | en-US | en_US | The Sims 3   |  
-; Spanish              | es-es | es_ES | Los Sims 3   |  
-; Finnish              | fi-fi | fi_FI | The Sims 3   |  
-; French               | fr-fr | fr_FR | Les Sims 3   |   
-; Hungarian            | hu-hu | hu_HU | The Sims 3   |   
-; Italian              | it-it | it_IT | The Sims 3   |   
-; Japanese             |   ?   | ja_JP | ザ･シムズ３   |   
-; Korean               | ko-kr | ko_KR | 심즈 3       |   
-; Dutch                | nl-nl | nl_NL | De Sims 3    |   
-; Norwegian Bokmål     | no-no | no_NO | The Sims 3   |   
-; Polish               | pl-pl | pl_PL | The Sims 3   |   
-; Portuguese (Brazil)  |   ?   | pt_BR | The Sims 3   |   
-; Portuguese (Portugal)| pt-pt | pt_PT | Os Sims 3    |   
-; Russian              | ru-ru | ru_RU | The Sims 3   |   
-; Swedish              | sv-se | sv_SE | The Sims 3   |   
-; Chinese (Traditional)| zh-tw | zh_TW | 模擬市民3     |   
-
-
+Var TS3FolderName
 
 Function .onInit
 	;-------------------------------------------------------------------------------
@@ -106,18 +79,72 @@ Function .onInit
 	${EndIf}
 
 	EAInit:
-	StrCpy $Platform "EA"
-	ReadRegStr $INSTDIR HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3" "Install Dir"
-	Goto OnInitFunctionEnd
+		StrCpy $Platform "EA"
+		ReadRegStr $INSTDIR HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3" "Install Dir"
+		SectionSetFlags 9 ${SF_RO} ; Sets section 10 (0-index) to read-only, KPST isn't compatible with EA yet
+		ReadRegStr $Locale HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3" "Locale"
+		Goto LanguageInit
 
 	SteamInit:
-	StrCpy $Platform "Steam"
-	ReadRegStr $INSTDIR HKLM "$SOFTWAREORWOW6432NODE\Sims(Steam)\The Sims 3" "install dir"
-	Goto OnInitFunctionEnd
-
-	OnInitFunctionEnd:
+		StrCpy $Platform "Steam"
+		ReadRegStr $INSTDIR HKLM "$SOFTWAREORWOW6432NODE\Sims(Steam)\The Sims 3" "install dir"
+		ReadRegStr $Locale HKLM "$SOFTWAREORWOW6432NODE\Sims(Steam)\The Sims 3" "locale"
+		Goto LanguageInit
+	;------------------------------------------------------
+	;|            Language table         				  |
+	;|                     |   Locale IDs  |              |
+	;|Language             | Steam |  EA   | Folder       |
+	;------------------------------------------------------
+	; Czech                | cs-cz | cs_CZ | The Sims 3   | 
+	; Danish               | da-dk | da_DK | The Sims 3   | 
+	; German [!]           | de-de | de_DE | Die Sims 3   |  
+	; Greek                |   ?   | el_GR | The Sims 3   |  
+	; English              | en-US | en_US | The Sims 3   |  
+	; Spanish [!]          | es-es | es_ES | Los Sims 3   |  
+	; Finnish              | fi-fi | fi_FI | The Sims 3   |  
+	; French [!]           | fr-fr | fr_FR | Les Sims 3   |   
+	; Hungarian            | hu-hu | hu_HU | The Sims 3   |   
+	; Italian              | it-it | it_IT | The Sims 3   |   
+	; Japanese [!]         |   ?   | ja_JP | ザ･シムズ３   |   
+	; Korean [!]           | ko-kr | ko_KR | 심즈 3       |   
+	; Dutch [!]            | nl-nl | nl_NL | De Sims 3    |   
+	; Norwegian Bokmål     | no-no | no_NO | The Sims 3   |   
+	; Polish               | pl-pl | pl_PL | The Sims 3   |   
+	; Portuguese (Brazil)  |   ?   | pt_BR | The Sims 3   |   
+	; Portuguese (Portu)[!]| pt-pt | pt_PT | Os Sims 3    |   
+	; Russian              | ru-ru | ru_RU | The Sims 3   |   
+	; Swedish              | sv-se | sv_SE | The Sims 3   |   
+	; Chinese (Traditio)[!]| zh-tw | zh_TW | 模擬市民3     |   
+	LanguageInit: ; Yes there's a better way to do this but please tell me mysterious anonymous repo visitor NSIS syntax gives me a headache
+		${If} $Locale == "de-de"
+		${OrIf} $Locale == "de_DE"
+			StrCpy $TS3FolderName "Die Sims 3"
+		${ElseIf} $Locale == "es-es"
+		${OrIf} $Locale == "es_ES"
+			StrCpy $TS3FolderName "Los Sims 3"
+		${ElseIf} $Locale == "fr-fr"
+		${OrIf} $Locale == "fr_FR"
+			StrCpy $TS3FolderName "Les Sims 3"
+		${ElseIf} $Locale == "ja_JP"
+			StrCpy $TS3FolderName "ザ･シムズ３"
+		${ElseIf} $Locale == "ko-kr"
+		${OrIf} $Locale == "ko_KR"
+			StrCpy $TS3FolderName "심즈 3"
+		${ElseIf} $Locale == "nl-nl"
+		${OrIf} $Locale == "nl_NL"
+			StrCpy $TS3FolderName "De Sims 3"
+		${ElseIf} $Locale == "pt-pt"
+		${OrIf} $Locale == "pt_PT"
+			StrCpy $TS3FolderName "Os Sims 3"
+		${ElseIf} $Locale == "zh-tw"
+		${OrIf} $Locale == "zh_TW"
+			StrCpy $TS3FolderName "模擬市民3"
+		${Else} ; Boring English fallback, let's hope this folder name is right if it wasn't detected before
+			StrCpy $TS3FolderName "The Sims 3" 
+		${EndIf}
 FunctionEnd
 	
+
 ;-------------------------------------------------------------------------------
 ; Constants
 Caption "The Sims 3 Starter Tool: Installer"
@@ -196,8 +223,6 @@ brandingText "swiffy Installer v0.1"
 ; Installer Sections
 Section "The Sims 3 Starter Tool Base" Section1
 	SectionIn RO
-	AddSize 1
-	IntOp $TotalSize $TotalSize + 1
 
 	DetailPrint "Platform detected as $Platform"
 	CreateDirectory '$INSTDIR\Starter Tool\'
@@ -231,57 +256,41 @@ Section "The Sims 3 Starter Tool Base" Section1
 	
 SectionEnd
 
-Section /o "Mods Folder" Section2 ; /o and RO temporary to grey out
-	SectionIn RO
-	AddSize 1
-	IntOp $TotalSize $TotalSize + 1
+Section /o "Mods Folder" Section2
+	SetOutPath '$Documents\Electronic Arts\$TS3FolderName'
+	File /r "..\resources\static\Mods"
 SectionEnd
 
 Section /o "Smooth Patch" Section3 ; /o and RO temporary to grey out
 	SectionIn RO
-	AddSize 1
-	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
 Section /o "Updated GPU Database" Section4 ; /o and RO temporary to grey out
 	SectionIn RO
-	AddSize 1
-	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
 Section /o "VRAM Usage Fix" Section5 ; /o and RO temporary to grey out
 	SectionIn RO
-	AddSize 1
-	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
 Section /o "CPU Usage Fix" Section6 ; /o and RO temporary to grey out
 	SectionIn RO
-	AddSize 1
-	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
 Section /o "Intel Modern CPU Patch" Section7 ; /o and RO temporary to grey out
 	SectionIn RO
-	AddSize 1
-	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
 Section /o "GPU Update Fix" Section8 ; /o and RO temporary to grey out
 	SectionIn RO
-	AddSize 1
-	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
 Section /o "Disable network features" Section9 ; RO temporary to grey out
 	SectionIn RO
-	AddSize 1
-	IntOp $TotalSize $TotalSize + 1
 SectionEnd
 
 Section /o "Katy Perry Sweet Treats" Section10
 	AddSize 127670
-	IntOp $TotalSize $TotalSize + 127670
 	SetDetailsPrint both
 	SetOutPath "$INSTDIR"	
 
@@ -335,18 +344,15 @@ Section /o "Katy Perry Sweet Treats" Section10
 
 		; Experimental code, still trying to make the pack detected on EA
 		ReadRegStr $RegLocale HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3" "Locale"
-		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "DisplayName" "The Sims 3 Katy Perry's Sweet Treats" ; Should be "The Sims™ 3 Katy Perry's Sweet Treats" but NSIS doesn't like that
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "DisplayName" "The Sims™ 3 Katy Perry's Sweet Treats"
 		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "Locale" "$RegLocale"
 		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "Install Dir" "$INSTDIR"
 		WriteRegDWORD HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "InstallStart" 0
 		WriteRegDWORD HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "ProductID" 13
 		WriteRegDWORD HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "SKU" 7
 
-
-
-
 		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3 Katy Perry Sweet Treats" "Install Dir" "$INSTDIR\SP06"
-		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Origin Games\71444" "DisplayName" "The Sims 3 Katy Perry's Sweet Treats" ; Should be "The Sims™ 3 Katy Perry's Sweet Treats" but NSIS doesn't like that
+		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Origin Games\71444" "DisplayName" "The Sims™ 3 Katy Perry's Sweet Treats"
 		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Origin Games\71444" "Locale" "$RegLocale2"
 
 		WriteRegStr HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3\DLCs\The Sims 3 Katy Perry Sweet Treats" "UninstallerArgs" "uninstall_pdlc -autologging"
@@ -424,7 +430,7 @@ SectionEnd
 ; MUI Descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${Section1} "The key files of the Starter Tool. No fixes are implemented here, but it's necessary for the installer to work properly and be uninstallable."
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section2} "This feature hasn't been implemented yet. Stay tuned for an update!"
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section2} "Adds a Mods folder to your game, fully ready to fill with .package mods and custom content! Use the Packages folder for regular content and Overrides for mods with special priority."
     !insertmacro MUI_DESCRIPTION_TEXT ${Section3} "This feature hasn't been implemented yet. Stay tuned for an update!"
     !insertmacro MUI_DESCRIPTION_TEXT ${Section4} "This feature hasn't been implemented yet. Stay tuned for an update!"
     !insertmacro MUI_DESCRIPTION_TEXT ${Section5} "This feature hasn't been implemented yet. Stay tuned for an update!"
@@ -432,5 +438,5 @@ SectionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${Section7} "This feature hasn't been implemented yet. Stay tuned for an update!"
     !insertmacro MUI_DESCRIPTION_TEXT ${Section8} "This feature hasn't been implemented yet. Stay tuned for an update!"
     !insertmacro MUI_DESCRIPTION_TEXT ${Section9} "This feature hasn't been implemented yet. Stay tuned for an update!"
-    !insertmacro MUI_DESCRIPTION_TEXT ${Section10} "This stuff pack (SP6) can no longer be legitimately purchased digitally and is therefore considered abandonware. This installer can add it into your game seamlessly."
+    !insertmacro MUI_DESCRIPTION_TEXT ${Section10} "This stuff pack (SP6) can no longer be legitimately purchased digitally and is therefore considered abandonware. This installer can add it into your game seamlessly (but unfortunately does not work for EA App installs just yet.)"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
