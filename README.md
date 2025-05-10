@@ -12,7 +12,7 @@ This tool is a Windows installer that applies various fixes to The Sims 3's game
 </a>  
 <strong>'Not commonly downloaded' warnings:</strong> This is because this version of the tool may not have many downloads yet. Press keep anyway.</br>
 <strong>SmartScreen warnings:</strong> Please select 'More info' then 'Run anyway' in the warning.  </br>
-This is because the program is unverified as I'd need to pay a fee to Microsoft for this. It's still safe, you can check the code for yourself! </br></br></br>
+This is because the program is unverified as I'd need to pay a fee to Microsoft for this. It's still safe, you can check the code for yourself! </br>
 
 [**.exe Installer**](https://github.com/swiffyjk/TS3-Starter-Tool/releases/download/v0.2/TS3StarterTool-Installer.exe)
   
