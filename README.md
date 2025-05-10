@@ -8,7 +8,7 @@ This tool is a Windows installer that applies various fixes to The Sims 3's game
 # Download:
 # Download:
 <a href="https://github.com/swiffyjk/TS3-Starter-Tool/releases/download/v0.2/TS3StarterTool-Installer.exe">
-  <img src="https://github.com/user-attachments/assets/d98c1f0f-52ed-43a2-b0da-c3cbb0ef816f" width="10%" height="10%" alt="Download icon" align="left">
+  <img src="https://github.com/user-attachments/assets/d98c1f0f-52ed-43a2-b0da-c3cbb0ef816f" width="12%" height="12%" alt="Download icon" align="left">
 </a>  
 <strong>'Not commonly downloaded' warnings:</strong> This is because this version of the tool may not have many downloads yet. Press keep anyway.</br>
 <strong>SmartScreen warnings:</strong> Please select 'More info' then 'Run anyway' in the warning.  </br>
