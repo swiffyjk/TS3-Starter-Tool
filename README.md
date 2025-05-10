@@ -4,8 +4,7 @@
 
 # The Sims 3 Starter Tool
 
-![Current Version](https://img.shields.io/github/v/release/swiffyjk/TS3-Starter-Tool?label=current%20version) ![GitHub all releases](https://img.shields.io/github/downloads/swiffyjk/TS3-Starter-Tool/total?label=total%20downloads)
-
+[![Current Version](https://img.shields.io/github/v/release/swiffyjk/TS3-Starter-Tool?label=current%20version)](https://github.com/swiffyjk/TS3-Starter-Tool/releases/latest) [![GitHub all releases](https://img.shields.io/github/downloads/swiffyjk/TS3-Starter-Tool/total?label=total%20downloads)](https://github.com/swiffyjk/TS3-Starter-Tool/releases/latest)
 This tool is a Windows installer that applies various fixes to The Sims 3's game files, gives you a Mods folder, and patches the game so it can run on modern systems.  
 
 # Download:
