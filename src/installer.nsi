@@ -58,8 +58,8 @@ Var InfoVersion
 Function .onInit
 	;-------------------------------------------------------------------------------
 	; Variables
-	StrCpy $Version 0.1
-	StrCpy $InstallerVersion "v0.1" 
+	StrCpy $Version 0.2
+	StrCpy $InstallerVersion "v0.2" 
 	${If} ${RunningX64}
 		StrCpy $SOFTWAREORWOW6432NODE "SOFTWARE\WOW6432Node"
 	${Else}
