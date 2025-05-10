@@ -25,7 +25,7 @@ This tool is a Windows installer that applies various fixes to The Sims 3's game
 |*Feature*|Steam|EA App|
 | :---         |     :---:      |     :---:      |
 |Katy Perry Sweet Treats installer*|🟨|⬜|
-|Mods folder template|🟥|🟥|
+|Mods folder template|🟩|🟩|
 |Smooth Patch|🟥|🟥|
 |GPU database update|🟥|🟥|
 |Increase CPU usage|🟥|🟥|
