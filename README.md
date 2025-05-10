@@ -6,7 +6,6 @@
 This tool is a Windows installer that applies various fixes to The Sims 3's game files, gives you a Mods folder, and patches the game so it can run on modern systems.  
 
 # Download:
-# Download:
 <a href="https://github.com/swiffyjk/TS3-Starter-Tool/releases/download/v0.2/TS3StarterTool-Installer.exe">
   <img src="https://github.com/user-attachments/assets/d98c1f0f-52ed-43a2-b0da-c3cbb0ef816f" width="12%" height="12%" alt="Download icon" align="left">
 </a>  
