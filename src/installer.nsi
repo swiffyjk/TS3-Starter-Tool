@@ -1,5 +1,6 @@
 ﻿Unicode true ; file must be encoded in UTF-8 with BOM
 Target amd64-unicode 
+SetCompressor /SOLID LZMA
 
 !define MUI_TITLE "The Sims 3 Starter Tool: Installer (v$Version)"
 !define MUI_WELCOMEFINISHPAGE_BITMAP "..\assets\InstallerImage.bmp"
@@ -50,17 +51,29 @@ Var RegCountry
 Var RegLocale
 Var RegLocale2
 Var TS3FolderName
+Var InstallerVersion
+Var InfoSimler
+Var InfoVersion
 
 Function .onInit
 	;-------------------------------------------------------------------------------
 	; Variables
 	StrCpy $Version 0.1
+	StrCpy $InstallerVersion "v0.1" 
 	${If} ${RunningX64}
 		StrCpy $SOFTWAREORWOW6432NODE "SOFTWARE\WOW6432Node"
 	${Else}
 		StrCpy $SOFTWAREORWOW6432NODE "SOFTWARE"
 	${EndIf}
 	;-------------------------------------------------------------------------------
+	; Info file check + update check
+	SetOutPath "$TEMP\lh1p13cro9\TS3StarterTool"
+	File "..\resources\info.ini"
+	ReadINIStr $InfoSimler "$TEMP\lh1p13cro9\TS3StarterTool\info.ini" "Assets" "Simler"
+	ReadINIStr $InfoVersion "$TEMP\lh1p13cro9\TS3StarterTool\info.ini" "Installer" "Version"
+	${If} $InstallerVersion == $InfoVersion
+		MessageBox MB_OKCANCEL|MB_DEFBUTTON2|MB_ICONEXCLAMATION "Warning: It looks like you're using an outdated version of the Starter Tool! You have version $InstallerVersion installed but there's a newer version, $InfoVersion. Please download it from the GitHub page. Continue anyways?" 
+	${EndIf}
 	; Game directory + platform selection
 	ReadRegStr $STEAMINSTDIR HKLM "$SOFTWAREORWOW6432NODE\Sims(Steam)\The Sims 3" "install dir"
 	ReadRegStr $EAINSTDIR HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3" "Install Dir"
@@ -160,7 +173,6 @@ Caption "The Sims 3 Starter Tool: Installer"
 Name "The Sims 3 Starter Tool"
 OutFile "..\bin\TS3StarterTool-Installer.exe"
 RequestExecutionLevel admin
-SetCompressor /SOLID LZMA
 ManifestDPIAware True
 VIProductVersion "${PRODUCT_VERSION}"
 VIAddVersionKey "FileDescription" "${PRODUCT_DESCRIPTION}"
@@ -184,7 +196,7 @@ brandingText "swiffy Installer v0.1"
 
 !define MUI_WELCOMEPAGE_TEXT "Welcome to The Sims 3 Starter Tool Installer. $\n$\nThis installer will apply the most essential fixes to your Sims 3 game, letting the game run much better, with less bugs and frame drops! It also equips you with a simple Mods folder to add mods and custom content. $\n$\nThis installer requires an existing installed copy of The Sims 3 using the discs, Steam or the EA App. $\n$\nPlease ensure you are using the latest version of this starter tool directly from the GitHub!"
 !define MUI_PAGE_HEADER_TEXT_INSTALLER "TS3 Starter Tool: Installer"
-!define MUI_WELCOMEPAGE_TITLE "The Sims 3 Starter Tool: Installer (v$Version)" 
+!define MUI_WELCOMEPAGE_TITLE "The Sims 3 Starter Tool: Installer ($InstallerVersion)" 
 !define MUI_FINISHPAGE_NOAUTOCLOSE
 
 ;-------------------------------------------------------------------------------
@@ -222,7 +234,7 @@ brandingText "swiffy Installer v0.1"
 ;-------------------------------------------------------------------------------
 ; Installer Sections
 Section "The Sims 3 Starter Tool Base" Section1
-	SectionIn RO
+;	SectionIn RO
 
 	DetailPrint "Platform detected as $Platform"
 	CreateDirectory '$INSTDIR\Starter Tool\'
@@ -262,7 +274,7 @@ Section /o "Mods Folder" Section2
 SectionEnd
 
 Section /o "Smooth Patch" Section3 ; /o and RO temporary to grey out
-	SectionIn RO
+	MessageBox MB_OK "$InfoSimler"
 SectionEnd
 
 Section /o "Updated GPU Database" Section4 ; /o and RO temporary to grey out
@@ -270,7 +282,6 @@ Section /o "Updated GPU Database" Section4 ; /o and RO temporary to grey out
 SectionEnd
 
 Section /o "VRAM Usage Fix" Section5 ; /o and RO temporary to grey out
-	SectionIn RO
 SectionEnd
 
 Section /o "CPU Usage Fix" Section6 ; /o and RO temporary to grey out
@@ -297,7 +308,7 @@ Section /o "Katy Perry Sweet Treats" Section10
 	${If} "$Platform" == "Steam"
 		DetailPrint "Downloading Katy Perry Sweet Treats..."
 
-		NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/KPST/KPST-Steam.7z" "$INSTDIR\temp\SP6.7z" /INSIST /END
+		NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/static/KPST/KPST-Steam.7z" "$INSTDIR\temp\SP6.7z" /INSIST /END
 		Pop $0
 		DetailPrint "Katy Perry Sweet Treats (Steam version) download status: $0"
 		Nsis7z::ExtractWithDetails "$INSTDIR\temp\SP6.7z" "Extracting Katy Perry Sweet Treats.7z... %s"
@@ -321,7 +332,7 @@ Section /o "Katy Perry Sweet Treats" Section10
 
 	${ElseIf} "$Platform" == "EA"
 		DetailPrint "Downloading Katy Perry Sweet Treats..."
-		NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/KPST/KPST-EA.7z" "$INSTDIR\temp\SP06.7z" /INSIST /END
+		NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/static/KPST/KPST-EA.7z" "$INSTDIR\temp\SP06.7z" /INSIST /END
 		Pop $0
 		DetailPrint "Katy Perry Sweet Treats (EA/Disc version) download status: $0"
 		SetOutPath "$INSTDIR"	
@@ -333,7 +344,7 @@ Section /o "Katy Perry Sweet Treats" Section10
 		nsExec::ExecToLog 'attrib +h "$PROGRAMFILES32\Common Files\EAInstaller\The Sims 3\The Sims 3 Katy Perry Sweet Treats"'
 
 		DetailPrint "Downloading Katy Perry Sweet Treats cleanup files..."
-		NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/KPST/KPST-EA-Cleanup.7z" "$INSTDIR\temp\Cleanup.7z" /INSIST /END
+		NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/static/KPST/KPST-EA-Cleanup.7z" "$INSTDIR\temp\Cleanup.7z" /INSIST /END
 		Pop $0
 		DetailPrint "Katy Perry Sweet Treats (EA/Disc cleanup files) download status: $0"
 		SetOutPath "$PROGRAMFILES32\Common Files\EAInstaller\The Sims 3\The Sims 3 Katy Perry Sweet Treats"	
