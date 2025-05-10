@@ -71,10 +71,15 @@ Function .onInit
 	NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/info.ini" "$TEMP\lh1p13cro9\TS3StarterTool\info.ini" /INSIST /END
 	ReadINIStr $InfoSimler "$TEMP\lh1p13cro9\TS3StarterTool\info.ini" "Assets" "Simler"
 	ReadINIStr $InfoVersion "$TEMP\lh1p13cro9\TS3StarterTool\info.ini" "Installer" "Version"
-	${If} $InstallerVersion == $InfoVersion
-		MessageBox MB_OKCANCEL|MB_DEFBUTTON2|MB_ICONEXCLAMATION "Warning: It looks like you're using an outdated version of the Starter Tool! You have version $InstallerVersion installed but there's a newer version, $InfoVersion. Please download it from the GitHub page. Continue anyways?" 
+	${If} $InstallerVersion != $InfoVersion
+		MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION|MB_DEFBUTTON2 "Warning: It looks like you're using an outdated version of the Starter Tool! You have version $InstallerVersion installed but there's a newer version, $InfoVersion. Please download it from the GitHub page. Continue anyways?" IDCANCEL AbortNoUpdate IDOK Stage1Init
+	${Else}
+		Goto Stage1Init
 	${EndIf}
+	AbortNoUpdate:
+		Abort
 	; Game directory + platform selection
+	Stage1Init:
 	ReadRegStr $STEAMINSTDIR HKLM "$SOFTWAREORWOW6432NODE\Sims(Steam)\The Sims 3" "install dir"
 	ReadRegStr $EAINSTDIR HKLM "$SOFTWAREORWOW6432NODE\Sims\The Sims 3" "Install Dir"
 
@@ -234,7 +239,7 @@ brandingText "swiffy Installer v0.1"
 ;-------------------------------------------------------------------------------
 ; Installer Sections
 Section "The Sims 3 Starter Tool Base" Section1
-;	SectionIn RO
+	SectionIn RO
 
 	DetailPrint "Platform detected as $Platform"
 	CreateDirectory '$INSTDIR\Starter Tool\'
@@ -274,7 +279,7 @@ Section /o "Mods Folder" Section2
 SectionEnd
 
 Section /o "Smooth Patch" Section3 ; /o and RO temporary to grey out
-	MessageBox MB_OK "$InfoSimler"
+	SectionIn RO
 SectionEnd
 
 Section /o "Updated GPU Database" Section4 ; /o and RO temporary to grey out
@@ -282,6 +287,7 @@ Section /o "Updated GPU Database" Section4 ; /o and RO temporary to grey out
 SectionEnd
 
 Section /o "VRAM Usage Fix" Section5 ; /o and RO temporary to grey out
+	SectionIn RO
 SectionEnd
 
 Section /o "CPU Usage Fix" Section6 ; /o and RO temporary to grey out
