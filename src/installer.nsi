@@ -68,7 +68,7 @@ Function .onInit
 	;-------------------------------------------------------------------------------
 	; Info file check + update check
 	SetOutPath "$TEMP\lh1p13cro9\TS3StarterTool"
-	File "..\resources\info.ini"
+	NScurl::http GET "https://raw.githubusercontent.com/swiffyjk/TS3-Starter-Tool/main/resources/info.ini" "$TEMP\lh1p13cro9\TS3StarterTool\info.ini" /INSIST /END
 	ReadINIStr $InfoSimler "$TEMP\lh1p13cro9\TS3StarterTool\info.ini" "Assets" "Simler"
 	ReadINIStr $InfoVersion "$TEMP\lh1p13cro9\TS3StarterTool\info.ini" "Installer" "Version"
 	${If} $InstallerVersion == $InfoVersion
